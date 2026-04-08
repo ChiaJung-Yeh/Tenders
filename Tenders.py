@@ -60,7 +60,7 @@ def crawler():
             f"&tenderEndDate={today.strftime('%Y')+'%2F'+today.strftime('%m')+'%2F'+today.strftime('%d')}"
         )
 
-        response = requests.get(url, timeout=30)
+        response = requests.get(url, timeout=100, verify=False)
         response.raise_for_status()
         response.encoding = "utf-8"
 
