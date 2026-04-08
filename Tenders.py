@@ -12,6 +12,10 @@ from email.message import EmailMessage
 all_keyword = ["割草", "油漆", "驅趕", "移除", "修繕", "粉刷", "維護", "修補"]
 AMOUNT_THRE = 1000000
 
+headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+}
 
 def date_convert(x):
     """
@@ -60,7 +64,7 @@ def crawler():
             f"&tenderEndDate={today.strftime('%Y')+'%2F'+today.strftime('%m')+'%2F'+today.strftime('%d')}"
         )
 
-        response = requests.get(url, timeout=100, verify=False)
+        response = requests.get(url, headers=headers, timeout=100, verify=False)
         response.raise_for_status()
         response.encoding = "utf-8"
 
