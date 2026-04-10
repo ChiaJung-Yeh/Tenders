@@ -154,7 +154,7 @@ print('Finished Parsing...')
 # send email
 sender = "1328robert@gmail.com"
 password = "iasw fego ieim reor"
-receiver = "nanye1yah@gmail.com"
+receiver = "nanye1@yahoo.com.tw"
 
 msg = EmailMessage()
 msg["Subject"] = '標案 '+today.strftime("%Y-%m-%d")
