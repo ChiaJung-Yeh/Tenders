@@ -12,10 +12,6 @@ from email.message import EmailMessage
 all_keyword = ["割草", "油漆", "驅趕", "移除", "修繕", "粉刷", "維護", "修補"]
 AMOUNT_THRE = 1000000
 
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
-}
 
 def date_convert(x):
     """
@@ -64,7 +60,7 @@ def crawler():
             f"&tenderEndDate={today.strftime('%Y')+'%2F'+today.strftime('%m')+'%2F'+today.strftime('%d')}"
         )
 
-        response = requests.get(url, headers=headers, timeout=100, verify=False)
+        response = requests.get(url, timeout=30, verify=False)
         response.raise_for_status()
         response.encoding = "utf-8"
 
@@ -104,6 +100,13 @@ def crawler():
                 amount = float(amount_raw.replace(",", "").replace("\r", "").replace("\n", "").replace("\t", ""))
             except:
                 amount = None
+                
+            link_tag = row.select_one(".bt_cen1 a")
+            
+            if link_tag and link_tag.get('href'):
+                url_link = "https://web.pcc.gov.tw" + link_tag.get('href')
+            else:
+                url_link = None
 
             all_tender_list.append({
                 "OfficeName": office_name,
@@ -112,7 +115,8 @@ def crawler():
                 "DisseminationDate": dissemination_date,
                 "DeadlineDate": deadline_date,
                 "Amount": amount,
-                "Type": keyword
+                "Type": keyword,
+                "Link": url_link
             })
 
     all_tender = pd.DataFrame(all_tender_list)
@@ -127,12 +131,16 @@ def crawler():
     all_tender_sel = (
         all_tender_sel
         .groupby(
-            ["OfficeName", "CaseID", "CaseName", "DisseminationDate", "DeadlineDate", "Amount"],
+            ["OfficeName", "CaseID", "CaseName", "DisseminationDate", "DeadlineDate", "Amount","Link"],
             dropna=False,
             as_index=False
         )
         .agg({"Type": "、".join})
     )
+    all_tender_sel=all_tender_sel.sort_values(by="DisseminationDate", ascending=False).reset_index(drop=True)
+    all_tender_sel=all_tender_sel.loc[:,['CaseID','Type','CaseName','OfficeName','DisseminationDate','DeadlineDate','Amount','Link']]
+    
+    all_tender_sel.columns=['標案案號','標案類型','標案名稱','機關名稱','公告日期','截止投標日期','預算金額','詳細連結']
     
     return(all_tender_sel)
 
