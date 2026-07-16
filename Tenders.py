@@ -8,6 +8,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.message import EmailMessage
+import os
 
 all_keyword = ["割草", "油漆", "驅趕", "移除", "修繕", "粉刷", "維護", "修補"]
 AMOUNT_THRE = 1000000
@@ -153,7 +154,7 @@ print('Finished Parsing...')
 
 # send email
 sender = "1328robert@gmail.com"
-password = "iasw fego ieim reor"
+password = os.environ["EMAIL_PASSWORD"]
 receiver = "nanye1@yahoo.com.tw"
 
 msg = EmailMessage()

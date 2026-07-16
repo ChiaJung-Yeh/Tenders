@@ -14,8 +14,6 @@ date_convert=function(x){
 today=as.Date(Sys.time(), tz="Asia/Taipei")
 
 
-
-
 all_tender=data.frame()
 for(i in c(1:length(all_keyword))){
   html_content=read_html(paste0("https://web.pcc.gov.tw/prkms/tender/common/basic/readTenderBasic?pageSize=10000&firstSearch=true&searchType=basic&isBinding=N&isLogIn=N&level_1=on&orgName=&orgId=&tenderName=", URLencode(all_keyword[i]), "&tenderId=&tenderType=TENDER_DECLARATION&tenderWay=TENDER_WAY_ALL_DECLARATION&dateType=isDate&tenderStartDate=", gsub("-", "%2F", today-30), "&tenderEndDate=", gsub("-", "%2F", today)))
