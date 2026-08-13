@@ -2,7 +2,7 @@ library(httr)
 library(rvest)
 library(dplyr)
 
-all_keyword=c("割草","油漆","驅趕","移除","修繕","粉刷","維護","修補")
+all_keyword=c("割草","油漆","驅趕","移除","修繕","粉刷","維護","修補","電腦","軟體","設計")
 AMOUNT_THRE=1000000
 
 
