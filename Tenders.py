@@ -9,10 +9,23 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.message import EmailMessage
 import os
+import gspread
 
-all_keyword = ["割草", "油漆", "驅趕", "移除", "修繕", "粉刷", "維護", "修補","電腦","軟體","設計"]
-AMOUNT_THRE = 1000000
+# all_keyword = ["割草", "油漆", "驅趕", "移除", "修繕", "粉刷", "維護", "修補","電腦","軟體","設計"]
+# AMOUNT_THRE = 1000000
 
+gc = gspread.service_account(filename="/etc/secrets/GOOGLE_CREDENTIALS.json")
+sheet_url = "https://docs.google.com/spreadsheets/d/1QNfIs03UgYlXgYH96bW3Os-QBNtAWimtQyNSeXIsf0A/edit"
+spreadsheet = gc.open_by_url(sheet_url)
+worksheet = spreadsheet.sheet1
+temp = pd.DataFrame(worksheet.get_all_records())
+
+all_keyword = temp["主題標籤"]
+all_keyword = all_keyword[
+    all_keyword.notna() &
+    (all_keyword.str.strip() != "")
+]
+AMOUNT_THRE = temp["金額上限"].iloc[0]
 
 def date_convert(x):
     """

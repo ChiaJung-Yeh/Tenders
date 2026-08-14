@@ -2,9 +2,17 @@ library(httr)
 library(rvest)
 library(dplyr)
 
-all_keyword=c("割草","油漆","驅趕","移除","修繕","粉刷","維護","修補","電腦","軟體","設計")
-AMOUNT_THRE=1000000
+# all_keyword=c("割草","油漆","驅趕","移除","修繕","粉刷","維護","修補","電腦","軟體","設計")
+# AMOUNT_THRE=1000000
 
+
+googlesheets4::gs4_auth(path="GOOGLE_CREDENTIALS.json")
+sheet_url="https://docs.google.com/spreadsheets/d/1QNfIs03UgYlXgYH96bW3Os-QBNtAWimtQyNSeXIsf0A/edit"
+temp=googlesheets4::read_sheet(sheet_url)
+
+all_keyword=temp$主題標籤
+all_keyword=all_keyword[!is.na(all_keyword) & all_keyword!="" & all_keyword!=" "]
+AMOUNT_THRE=temp$金額上限[1]
 
 date_convert=function(x){
   temp=as.numeric(unlist(strsplit(x, "/")))
