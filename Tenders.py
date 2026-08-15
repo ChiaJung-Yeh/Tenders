@@ -52,7 +52,7 @@ def crawler():
     today = pd.Timestamp.today().normalize()
     start_date = today - pd.Timedelta(days=30)
 
-    all_tender_list = pd.DataFrame()
+    all_tender = pd.DataFrame()
 
     for keyword_id in range(len(all_keyword)):
         url = (
