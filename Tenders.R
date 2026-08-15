@@ -12,7 +12,7 @@ temp=googlesheets4::read_sheet(sheet_url)
 
 all_keyword=temp$主題標籤
 all_keyword=all_keyword[!is.na(all_keyword) & all_keyword!="" & all_keyword!=" "]
-AMOUNT_THRE=temp$金額上限[1]
+AMOUNT_THRE=temp$金額上限
 
 date_convert=function(x){
   temp=as.numeric(unlist(strsplit(x, "/")))
@@ -37,12 +37,12 @@ for(i in c(1:length(all_keyword))){
                   DeadlineDate=as.Date(unlist(lapply(gsub("\r|\n|\t", "", html_text(html_nodes(html_content, "#tpam td:nth-child(8)"))), date_convert))),
                   Amount=as.numeric(gsub("\r|\n|\t|,", "", html_text(html_nodes(html_content, "#tpam td:nth-child(9)")))),
                   Link=url_link)%>%
-    mutate(Type=all_keyword[i])
+    mutate(Type=all_keyword[i])%>%
+    filter(DeadlineDate>=today, !is.na(Amount), Amount<=AMOUNT_THRE[i])
   all_tender=rbind(all_tender, temp)
   print(i)
 }
-all_tender_sel=filter(all_tender, DeadlineDate>=today, !is.na(Amount), Amount<=AMOUNT_THRE)%>%
-  group_by(OfficeName, CaseID, CaseName, DisseminationDate, DeadlineDate, Amount, Link)%>%
+all_tender_sel=group_by(all_tender, OfficeName, CaseID, CaseName, DisseminationDate, DeadlineDate, Amount, Link)%>%
   summarise(Type=paste(Type, collapse="、"))
 
 

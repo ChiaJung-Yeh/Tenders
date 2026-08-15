@@ -25,7 +25,7 @@ all_keyword = all_keyword[
     all_keyword.notna() &
     (all_keyword.str.strip() != "")
 ]
-AMOUNT_THRE = temp["金額上限"].iloc[0]
+AMOUNT_THRE = temp["金額上限"]
 
 def date_convert(x):
     """
@@ -52,9 +52,9 @@ def crawler():
     today = pd.Timestamp.today().normalize()
     start_date = today - pd.Timedelta(days=30)
 
-    all_tender_list = []
+    all_tender_list = pd.DataFrame()
 
-    for keyword in all_keyword:
+    for keyword_id in range(len(all_keyword)):
         url = (
             "https://web.pcc.gov.tw/prkms/tender/common/basic/readTenderBasic"
             f"?pageSize=10000"
@@ -65,7 +65,7 @@ def crawler():
             f"&level_1=on"
             f"&orgName="
             f"&orgId="
-            f"&tenderName={quote(keyword)}"
+            f"&tenderName={quote(all_keyword[keyword_id])}"
             f"&tenderId="
             f"&tenderType=TENDER_DECLARATION"
             f"&tenderWay=TENDER_WAY_ALL_DECLARATION"
@@ -122,28 +122,30 @@ def crawler():
             else:
                 url_link = None
 
-            all_tender_list.append({
-                "OfficeName": office_name,
-                "CaseID": case_id,
-                "CaseName": case_name,
-                "DisseminationDate": dissemination_date,
-                "DeadlineDate": deadline_date,
-                "Amount": amount,
-                "Type": keyword,
-                "Link": url_link
-            })
+            if len(case_id)!=0:
+                all_tender_temp = pd.DataFrame([{
+                    "OfficeName": office_name,
+                    "CaseID": case_id,
+                    "CaseName": case_name,
+                    "DisseminationDate": dissemination_date,
+                    "DeadlineDate": deadline_date,
+                    "Amount": amount,
+                    "Type": all_keyword[keyword_id],
+                    "Link": url_link
+                }])
 
-    all_tender = pd.DataFrame(all_tender_list)
 
-    all_tender_sel = all_tender[
-        (all_tender["DeadlineDate"] >= today) &
-        (all_tender["Amount"].notna()) &
-        (all_tender["Amount"] <= AMOUNT_THRE)
-    ].copy()
+                all_tender_temp=all_tender_temp[
+                    (all_tender_temp["DeadlineDate"] >= today) &
+                    (all_tender_temp["Amount"].notna()) &
+                    (all_tender_temp["Amount"] <= AMOUNT_THRE[keyword_id])
+                ]
+
+                all_tender=pd.concat([all_tender, all_tender_temp])
 
 
     all_tender_sel = (
-        all_tender_sel
+        all_tender
         .groupby(
             ["OfficeName", "CaseID", "CaseName", "DisseminationDate", "DeadlineDate", "Amount","Link"],
             dropna=False,
