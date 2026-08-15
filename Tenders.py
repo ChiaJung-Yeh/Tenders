@@ -184,7 +184,19 @@ msg.attach(MIMEText(body, "plain"))
 with open('標案_'+today.strftime("%Y-%m-%d")+'.xlsx', "rb") as f:
     file_data = f.read()
     file_name = '標案_'+today.strftime("%Y-%m-%d")+'.xlsx'
-    
+ 
+ msg.add_alternative("""
+<html>
+    <body>
+        <p>
+            <a href="https://docs.google.com/spreadsheets/d/1QNfIs03UgYlXgYH96bW3Os-QBNtAWimtQyNSeXIsf0A/edit">
+                標案主題和金額參數修正連結
+            </a>
+        </p>
+    </body>
+</html>
+""", subtype="html")
+   
 msg.add_attachment(
     file_data,
     maintype="application",
