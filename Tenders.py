@@ -185,7 +185,7 @@ with open('標案_'+today.strftime("%Y-%m-%d")+'.xlsx', "rb") as f:
     file_data = f.read()
     file_name = '標案_'+today.strftime("%Y-%m-%d")+'.xlsx'
  
- msg.add_alternative("""
+msg.add_alternative("""
 <html>
     <body>
         <p>
